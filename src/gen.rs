@@ -1,7 +1,7 @@
 use ndarray::prelude::*;
 use rand::prelude::*;
 
-use crate::Puzzle;
+use crate::*;
 
 impl Puzzle {
 
@@ -17,7 +17,7 @@ impl Puzzle {
         }
         let blank_pos = (n - 1, n - 1);
         tiles[blank_pos] = 0;
-        let mut puzzle = Puzzle { n, tiles, blank_pos };
+        let mut puzzle = Puzzle::new(n, tiles);
 
         // Stir "sufficiently".
         let mut prng = rand::thread_rng();

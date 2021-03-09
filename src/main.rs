@@ -1,14 +1,17 @@
 mod gen;
 mod puzzle;
 mod heur;
+mod load;
 
 use std::cmp::Ordering::*;
+use std::path::PathBuf;
 
 use gumdrop::Options;
 
 pub use gen::*;
 pub use puzzle::*;
 pub use heur::*;
+pub use load::*;
 
 #[derive(Debug, Options)]
 struct Opts {
@@ -17,6 +20,9 @@ struct Opts {
 
     #[options(help = "heuristic (dijkstra/0, manhattan)")]
     heuristic: Option<String>,
+
+    #[options(help = "load puzzle from given path")]
+    file: Option<PathBuf>,
 
     #[options(help = "show moves")]
     moves: bool,
@@ -55,7 +61,14 @@ fn main() {
         dijkstra
     };
 
-    let mut p = Puzzle::generate(n);
+    let mut p = if let Some(path) = opts.file {
+        load_puzzle(path).unwrap_or_else(|e| {
+            eprintln!("puzzle load failed: {}", e);
+            std::process::exit(1);
+        })
+    } else {
+        Puzzle::generate(n)
+    };
     println!("{}", p);
 
     if let Some(moves) = p.solve_astar(h) {

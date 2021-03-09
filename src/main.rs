@@ -10,7 +10,7 @@ pub use puzzle::*;
 
 #[derive(Debug, Options)]
 struct Opts {
-    #[options(help = "size (e.g. 3, 8, 15, 24)")]
+    #[options(short = "n", help = "size (e.g. 3, 8, 15, 24)")]
     size: Option<usize>,
 
     #[options(help = "show moves")]

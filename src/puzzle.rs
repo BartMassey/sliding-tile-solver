@@ -120,13 +120,25 @@ impl Puzzle {
 
 impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (space, sep, width) = if self.n <= 3 {(
+            " ".to_string(),
+            "".to_string(),
+            1,
+        )} else {(
+            "  ".to_string(),
+            " ".to_string(),
+            2,
+        )};
         for r in 0..self.n {
             for c in 0..self.n {
+                if c > 0 {
+                    write!(f, "{}", sep)?;
+                }
                 let t = self.tiles[(r, c)];
                 if t == 0 {
-                    write!(f, " ")?;
+                    write!(f, "{}", space)?;
                 } else {
-                    write!(f, "{}", t)?;
+                    write!(f, "{:01$}", t, width)?;
                 }
             }
             writeln!(f)?;

@@ -6,9 +6,9 @@ use ndarray::prelude::*;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Puzzle {
-    n: usize,
-    tiles: Array2<u8>,
-    blank_pos: (usize, usize),
+    pub n: usize,
+    pub tiles: Array2<u8>,
+    pub blank_pos: (usize, usize),
 }
 
 

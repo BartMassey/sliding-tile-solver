@@ -1,5 +1,6 @@
 mod gen;
 mod puzzle;
+mod heur;
 
 use std::cmp::Ordering::*;
 
@@ -7,6 +8,7 @@ use gumdrop::Options;
 
 pub use gen::*;
 pub use puzzle::*;
+pub use heur::*;
 
 #[derive(Debug, Options)]
 struct Opts {
@@ -42,14 +44,14 @@ fn main() {
 
     let h = if let Some(h) = opts.heuristic {
         match h.as_str() {
-            "dijkstra" | "0" => |_: &Puzzle| 0,
+            "dijkstra" | "0" => dijkstra,
             _ => {
                 eprintln!("unknown heuristic {}", h);
                 std::process::exit(1);
             }
         }
     } else {
-        |_: &Puzzle| 0
+        dijkstra
     };
 
     let mut p = Puzzle::generate(n);

@@ -18,7 +18,7 @@ struct Opts {
     #[options(short = "n", help = "size (e.g. 3, 8, 15, 24)")]
     size: Option<usize>,
 
-    #[options(help = "heuristic (dijkstra/0, manhattan)")]
+    #[options(help = "heuristic (dijkstra/0, manhattan, interference)")]
     heuristic: Option<String>,
 
     #[options(help = "load puzzle from given path")]
@@ -51,7 +51,8 @@ fn main() {
     let h = if let Some(h) = opts.heuristic {
         match h.as_str() {
             "dijkstra" | "0" => dijkstra,
-            "manhattan" => manhattan,
+            "manhattan" => |p: &Puzzle| manhattan(p, false),
+            "interference" => |p: &Puzzle| manhattan(p, true),
             _ => {
                 eprintln!("unknown heuristic {}", h);
                 std::process::exit(1);

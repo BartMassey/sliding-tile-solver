@@ -22,10 +22,11 @@ fn abs_diff(x: usize, y: usize) -> usize {
     }
 }
 
-pub fn manhattan(p: &Puzzle) -> usize {
+pub fn manhattan(p: &Puzzle, interference: bool) -> usize {
     let mut sum = 0;
-    for r in 0..p.n {
-        for c in 0..p.n {
+    let n = p.n;
+    for r in 0..n {
+        for c in 0..n {
             let tile = p.tiles[(r, c)];
             if tile == 0 {
                 continue;
@@ -33,6 +34,26 @@ pub fn manhattan(p: &Puzzle) -> usize {
             let (tr, tc) = p.target(tile);
             sum += abs_diff(r, tr);
             sum += abs_diff(c, tc);
+            if interference {
+                if r == tr {
+                    for xc in c+1..n {
+                        let tile = p.tiles[(r, xc)];
+                        let (yc, yr) = p.target(tile);
+                        if yr == r && yc < tc {
+                            sum += 2;
+                        }
+                    }
+                }
+                if c == tc {
+                    for xr in r+1..n {
+                        let tile = p.tiles[(xr, c)];
+                        let (yc, yr) = p.target(tile);
+                        if yc == c && yr < tr {
+                            sum += 2;
+                        }
+                    }
+                }
+            }
         }
     }
     sum

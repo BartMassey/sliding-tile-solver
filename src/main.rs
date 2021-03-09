@@ -35,7 +35,7 @@ fn main() {
 
     let mut p = Puzzle::generate(n);
     println!("{}", p);
-    if let Some(moves) = p.solve_dijkstra() {
+    if let Some(moves) = p.solve_astar(|_| 0) {
         println!("{} moves", moves.len());
         if opts.moves {
             for m in moves {

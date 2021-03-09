@@ -64,11 +64,14 @@ impl Puzzle {
         panic!("internal error: is_goal fell off end");
     }
 
-    pub fn solve_dijkstra(&self) -> Option<Vec<(usize, usize)>> {
+    pub fn solve_astar<H>(&self, h: H) -> Option<Vec<(usize, usize)>>
+        where H: Fn(&Puzzle) -> usize
+    {
 
-        // Taken from the Rust documentation.
+        // Inspired by the Rust documentation.
         #[derive(Clone, PartialEq, Eq)]
         struct State {
+            g: usize,
             cost: usize,
             position: Puzzle,
             prev_blank: Option<(usize, usize)>,
@@ -88,10 +91,11 @@ impl Puzzle {
 
         let mut closed = HashMap::new();
         let mut q = BinaryHeap::new();
-        q.push(State { position: self.clone(), cost: 0, prev_blank: None });
+        let cost = h(self);
+        q.push(State { position: self.clone(), g: 0, cost, prev_blank: None });
         while let Some(mut s) = q.pop() {
             if s.position.is_goal() {
-                let mut result = Vec::with_capacity(s.cost);
+                let mut result = Vec::with_capacity(s.g);
                 result.push(s.position.blank_pos);
                 let mut prev_blank = s.prev_blank;
                 while let Some(m) = prev_blank {
@@ -108,7 +112,8 @@ impl Puzzle {
                 let prev_blank = Some(p.blank_pos);
                 p.make_move(m);
                 if !closed.contains_key(&p) {
-                    q.push(State { cost: s.cost + 1, position: p, prev_blank })
+                    let cost = s.g + 1 + h(&p);
+                    q.push(State { g: s.g + 1, cost, position: p, prev_blank })
                 }
             }
             closed.insert(s.position, s.prev_blank);
